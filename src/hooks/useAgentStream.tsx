@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback } from "react";
+import { useRef, useState, useCallback, useEffect } from "react";
 import { postAgentStream } from "@/services/agent";
 import type { AgentQueryRequest } from "@/services/agent/types";
 
@@ -44,6 +44,13 @@ export function useAgentStream() {
   const stopStream = useCallback(() => {
     abortRef.current?.abort();
     abortRef.current = null;
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      abortRef.current?.abort();
+      abortRef.current = null;
+    };
   }, []);
 
   const clearStream = useCallback(() => {
