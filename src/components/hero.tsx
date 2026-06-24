@@ -11,7 +11,7 @@ export function Hero() {
         </p>
         <div className="mt-10 flex items-center justify-center gap-4">
           <a
-            href="#"
+            href="/chat"
             className="rounded-lg bg-gray-900 px-6 py-3 text-sm font-medium text-white hover:bg-gray-800"
           >
             Get Started

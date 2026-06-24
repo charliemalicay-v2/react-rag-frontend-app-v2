@@ -1,9 +1,9 @@
 import axiosClient from "@/lib/axiosClient";
-import type { AgentQueryRequest, AgentQueryResponse } from "./types";
+import type { AgentQueryRequest, AgentQueryResponse, AgentApiResponse } from "./types";
 
 export async function postAgentQuery(payload: AgentQueryRequest): Promise<AgentQueryResponse> {
-  const { data } = await axiosClient.post<AgentQueryResponse>("/api/v1/agent", payload);
-  return data;
+  const { data } = await axiosClient.post<AgentApiResponse>("/api/v1/agent", payload);
+  return data.results;
 }
 
 export function postAgentStream(

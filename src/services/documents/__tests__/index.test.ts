@@ -1,17 +1,17 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
 import axiosClient from "@/lib/axiosClient";
 import { postDocumentChat } from "..";
 import type { DocumentChatRequest, DocumentChatResponse } from "../types";
 
-vi.mock("@/lib/axiosClient", () => ({
+jest.mock("@/lib/axiosClient", () => ({
+  __esModule: true,
   default: {
-    post: vi.fn(),
+    post: jest.fn(),
   },
 }));
 
 describe("postDocumentChat", () => {
   beforeEach(() => {
-    vi.clearAllMocks();
+    jest.clearAllMocks();
   });
 
   it("posts to /api/documents/chat and returns response", async () => {
@@ -23,7 +23,7 @@ describe("postDocumentChat", () => {
       answer: "document answer",
       relevantChunks: ["chunk1"],
     };
-    vi.mocked(axiosClient.post).mockResolvedValue({ data: mockResponse });
+    jest.mocked(axiosClient.post).mockResolvedValue({ data: mockResponse });
 
     const result = await postDocumentChat(payload);
 
@@ -35,7 +35,7 @@ describe("postDocumentChat", () => {
   });
 
   it("throws on error", async () => {
-    vi.mocked(axiosClient.post).mockRejectedValue(new Error("API error"));
+    jest.mocked(axiosClient.post).mockRejectedValue(new Error("API error"));
 
     await expect(
       postDocumentChat({ documentId: "doc-123", query: "fail" })

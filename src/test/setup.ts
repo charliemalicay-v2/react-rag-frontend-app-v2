@@ -1,1 +1,1 @@
-import "@testing-library/jest-dom";
+// MSW lifecycle hooks will go here once test environment supports Request

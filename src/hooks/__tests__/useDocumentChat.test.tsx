@@ -1,21 +1,20 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, waitFor } from "@testing-library/react";
 import { useDocumentChat } from "../useDocumentChat";
 import { TestQueryProvider } from "@/test/test-utils";
 
-vi.mock("@/services/documents", () => ({
-  postDocumentChat: vi.fn(),
+jest.mock("@/services/documents", () => ({
+  postDocumentChat: jest.fn(),
 }));
 
 import { postDocumentChat } from "@/services/documents";
 
 describe("useDocumentChat", () => {
   beforeEach(() => {
-    vi.clearAllMocks();
+    jest.clearAllMocks();
   });
 
   it("mutates and returns response", async () => {
-    vi.mocked(postDocumentChat).mockResolvedValue({
+    jest.mocked(postDocumentChat).mockResolvedValue({
       answer: "document answer",
       relevantChunks: ["chunk1"],
     });
@@ -35,7 +34,7 @@ describe("useDocumentChat", () => {
   });
 
   it("surfaces error on failure", async () => {
-    vi.mocked(postDocumentChat).mockRejectedValue(new Error("API error"));
+    jest.mocked(postDocumentChat).mockRejectedValue(new Error("API error"));
 
     const { result } = renderHook(() => useDocumentChat(), {
       wrapper: TestQueryProvider,

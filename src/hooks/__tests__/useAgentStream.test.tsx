@@ -1,20 +1,19 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, waitFor, act } from "@testing-library/react";
 import { useAgentStream } from "../useAgentStream";
 
-vi.mock("@/services/agent", () => ({
-  postAgentStream: vi.fn(),
+jest.mock("@/services/agent", () => ({
+  postAgentStream: jest.fn(),
 }));
 
 import { postAgentStream } from "@/services/agent";
 
 describe("useAgentStream", () => {
   beforeEach(() => {
-    vi.clearAllMocks();
+    jest.clearAllMocks();
   });
 
   it("starts streaming and accumulates data", async () => {
-    vi.mocked(postAgentStream).mockImplementation(
+    jest.mocked(postAgentStream).mockImplementation(
       async (_payload, onChunk) => {
         onChunk("hello ");
         onChunk("world");
@@ -34,7 +33,7 @@ describe("useAgentStream", () => {
 
   it("sets isStreaming true during stream, false after", async () => {
     let resolvePromise!: () => void;
-    vi.mocked(postAgentStream).mockImplementation(
+    jest.mocked(postAgentStream).mockImplementation(
       () =>
         new Promise<void>((resolve) => {
           resolvePromise = resolve;
@@ -57,7 +56,7 @@ describe("useAgentStream", () => {
   });
 
   it("surfaces error on failure", async () => {
-    vi.mocked(postAgentStream).mockRejectedValue(new Error("Stream failed"));
+    jest.mocked(postAgentStream).mockRejectedValue(new Error("Stream failed"));
 
     const { result } = renderHook(() => useAgentStream());
 
@@ -70,8 +69,8 @@ describe("useAgentStream", () => {
   });
 
   it("stopStream aborts the stream", async () => {
-    const abortSpy = vi.fn();
-    vi.mocked(postAgentStream).mockImplementation(
+    const abortSpy = jest.fn();
+    jest.mocked(postAgentStream).mockImplementation(
       async (_payload, _onChunk, signal) => {
         signal?.addEventListener("abort", abortSpy);
       }
@@ -91,7 +90,7 @@ describe("useAgentStream", () => {
   });
 
   it("retry re-invokes with the last payload", async () => {
-    const streamFn = vi.mocked(postAgentStream);
+    const streamFn = jest.mocked(postAgentStream);
     streamFn.mockResolvedValue();
 
     const { result } = renderHook(() => useAgentStream());
@@ -114,7 +113,7 @@ describe("useAgentStream", () => {
   });
 
   it("clearStream resets streamedData and streamError", async () => {
-    vi.mocked(postAgentStream).mockRejectedValue(new Error("Temp error"));
+    jest.mocked(postAgentStream).mockRejectedValue(new Error("Temp error"));
 
     const { result } = renderHook(() => useAgentStream());
 
