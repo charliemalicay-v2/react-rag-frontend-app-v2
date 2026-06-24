@@ -12,9 +12,8 @@ export function postAgentStream(
   signal?: AbortSignal
 ): Promise<void> {
   return new Promise((resolve, reject) => {
-    const eventSource = new EventSource(
-      `${axiosClient.defaults.baseURL}/api/v1/agent/stream`
-    );
+    const url = `${axiosClient.defaults.baseURL}/api/v1/agent/stream?query=${encodeURIComponent(payload.query)}`;
+    const eventSource = new EventSource(url);
 
     eventSource.onmessage = (event) => {
       onChunk(event.data);
