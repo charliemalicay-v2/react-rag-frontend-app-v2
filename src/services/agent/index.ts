@@ -20,8 +20,9 @@ export function postAgentStream(
     };
 
     eventSource.onerror = () => {
-      eventSource.close();
-      reject(new Error("SSE connection dropped"));
+      if (eventSource.readyState === EventSource.CLOSED) {
+        reject(new Error("SSE connection dropped"));
+      }
     };
 
     if (signal) {
