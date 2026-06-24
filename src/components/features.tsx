@@ -2,7 +2,7 @@ const features = [
   { title: "Feature One", description: "Lorem ipsum dolor sit amet consectetur adipisicing elit." },
   { title: "Feature Two", description: "Lorem ipsum dolor sit amet consectetur adipisicing elit." },
   { title: "Feature Three", description: "Lorem ipsum dolor sit amet consectetur adipisicing elit." },
-  { title: "Feature Four", description: "Lorem ipsum dolor sit amet consectetur adipisicing elit." },
+  { title: "RAG Chat", description: "Chat with a bot using streaming or non-streaming modes. Supports document-based queries.", href: "/chat" },
   { title: "Feature Five", description: "Lorem ipsum dolor sit amet consectetur adipisicing elit." },
   { title: "Feature Six", description: "Lorem ipsum dolor sit amet consectetur adipisicing elit." },
 ];
@@ -18,12 +18,22 @@ export function Features() {
           Everything you need to get started.
         </p>
         <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {features.map((f, i) => (
-            <div key={i} className="rounded-xl border p-6">
-              <h3 className="text-lg font-semibold">{f.title}</h3>
-              <p className="text-muted-foreground mt-2 text-sm">{f.description}</p>
-            </div>
-          ))}
+          {features.map((f, i) => {
+            const card = (
+              <div key={i} className="rounded-xl border p-6">
+                <h3 className="text-lg font-semibold">{f.title}</h3>
+                <p className="text-muted-foreground mt-2 text-sm">{f.description}</p>
+              </div>
+            );
+            if (f.href) {
+              return (
+                <a key={i} href={f.href} className="block transition-opacity hover:opacity-80">
+                  {card}
+                </a>
+              );
+            }
+            return card;
+          })}
         </div>
       </div>
     </section>

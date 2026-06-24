@@ -1,21 +1,20 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, waitFor } from "@testing-library/react";
 import { useHealthCheck } from "../useHealthCheck";
 import { TestQueryProvider } from "@/test/test-utils";
 
-vi.mock("@/services/health", () => ({
-  getHealthCheck: vi.fn(),
+jest.mock("@/services/health", () => ({
+  getHealthCheck: jest.fn(),
 }));
 
 import { getHealthCheck } from "@/services/health";
 
 describe("useHealthCheck", () => {
   beforeEach(() => {
-    vi.clearAllMocks();
+    jest.clearAllMocks();
   });
 
   it("returns health data on success", async () => {
-    vi.mocked(getHealthCheck).mockResolvedValue({
+    jest.mocked(getHealthCheck).mockResolvedValue({
       status: "ok",
       timestamp: "2026-06-24T00:00:00Z",
     });
@@ -33,7 +32,7 @@ describe("useHealthCheck", () => {
   });
 
   it("surfaces error on failure", async () => {
-    vi.mocked(getHealthCheck).mockRejectedValue(new Error("Network error"));
+    jest.mocked(getHealthCheck).mockRejectedValue(new Error("Network error"));
 
     const { result } = renderHook(() => useHealthCheck(), {
       wrapper: TestQueryProvider,

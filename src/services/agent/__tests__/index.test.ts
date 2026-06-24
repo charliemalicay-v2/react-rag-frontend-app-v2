@@ -1,17 +1,17 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
 import axiosClient from "@/lib/axiosClient";
 import { postAgentQuery } from "..";
 import type { AgentQueryRequest, AgentQueryResponse } from "../types";
 
-vi.mock("@/lib/axiosClient", () => ({
+jest.mock("@/lib/axiosClient", () => ({
+  __esModule: true,
   default: {
-    post: vi.fn(),
+    post: jest.fn(),
   },
 }));
 
 describe("postAgentQuery", () => {
   beforeEach(() => {
-    vi.clearAllMocks();
+    jest.clearAllMocks();
   });
 
   it("posts to /api/v1/agent and returns response", async () => {
@@ -20,7 +20,7 @@ describe("postAgentQuery", () => {
       answer: "test answer",
       sources: ["doc1"],
     };
-    vi.mocked(axiosClient.post).mockResolvedValue({ data: mockResponse });
+    jest.mocked(axiosClient.post).mockResolvedValue({ data: { results: mockResponse } });
 
     const result = await postAgentQuery(payload);
 
@@ -29,7 +29,7 @@ describe("postAgentQuery", () => {
   });
 
   it("throws on error", async () => {
-    vi.mocked(axiosClient.post).mockRejectedValue(new Error("API error"));
+    jest.mocked(axiosClient.post).mockRejectedValue(new Error("API error"));
 
     await expect(postAgentQuery({ query: "fail" })).rejects.toThrow("API error");
   });
