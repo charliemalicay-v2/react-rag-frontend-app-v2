@@ -1,32 +1,27 @@
 import { useRef, useState, useCallback } from "react";
-import { useQueryClient } from "@tanstack/react-query";
 import { postAgentStream } from "@/services/agent";
-import type { AgentQueryRequest, AgentQueryResponse } from "@/services/agent/types";
+import type { AgentQueryRequest } from "@/services/agent/types";
 
 export function useAgentStream() {
-  const queryClient = useQueryClient();
   const abortRef = useRef<AbortController | null>(null);
   const [isStreaming, setIsStreaming] = useState(false);
   const [streamError, setStreamError] = useState<string | null>(null);
+  const [streamedData, setStreamedData] = useState("");
   const lastPayloadRef = useRef<AgentQueryRequest | null>(null);
 
   const startStream = useCallback(
     async (payload: AgentQueryRequest) => {
       setIsStreaming(true);
       setStreamError(null);
+      setStreamedData("");
       lastPayloadRef.current = payload;
       abortRef.current = new AbortController();
-
-      const accumulated: string[] = [];
 
       try {
         await postAgentStream(
           payload,
           (chunk) => {
-            accumulated.push(chunk);
-            queryClient.setQueryData<AgentQueryResponse>(["agent", "stream"], {
-              answer: accumulated.join(""),
-            });
+            setStreamedData((prev) => prev + chunk);
           },
           abortRef.current.signal
         );
@@ -37,7 +32,7 @@ export function useAgentStream() {
         setIsStreaming(false);
       }
     },
-    [queryClient]
+    []
   );
 
   const retry = useCallback(async () => {
@@ -51,5 +46,10 @@ export function useAgentStream() {
     abortRef.current = null;
   }, []);
 
-  return { startStream, stopStream, retry, isStreaming, streamError };
+  const clearStream = useCallback(() => {
+    setStreamedData("");
+    setStreamError(null);
+  }, []);
+
+  return { startStream, stopStream, retry, clearStream, isStreaming, streamError, streamedData };
 }

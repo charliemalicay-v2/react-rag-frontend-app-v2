@@ -31,8 +31,10 @@ export function RagPanel() {
     startStream,
     stopStream,
     retry: retryStream,
+    clearStream,
     isStreaming,
     streamError,
+    streamedData,
   } = useAgentStream();
   const docChat = useDocumentChat();
 
@@ -55,6 +57,7 @@ export function RagPanel() {
       return;
     }
     setValidationError(null);
+    clearStream();
     await startStream({ query });
   };
 
@@ -155,6 +158,12 @@ export function RagPanel() {
         {agentResult && (
           <div className="rounded-md bg-gray-50 p-3">
             <p className="text-sm">{agentResult}</p>
+          </div>
+        )}
+
+        {streamedData && (
+          <div className="rounded-md bg-blue-50 p-3">
+            <p className="text-sm">{streamedData}</p>
           </div>
         )}
 
