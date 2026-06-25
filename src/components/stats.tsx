@@ -1,3 +1,5 @@
+import { Card, CardContent } from "@/components/ui/card"
+
 const stats = [
   { label: "Users", value: "10K+" },
   { label: "Downloads", value: "50K+" },
@@ -7,14 +9,16 @@ const stats = [
 
 export function Stats() {
   return (
-    <section className="bg-gray-900 py-16 text-white">
+    <section className="bg-muted py-16">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
           {stats.map((s, i) => (
-            <div key={i} className="text-center">
-              <p className="text-3xl font-bold md:text-4xl">{s.value}</p>
-              <p className="mt-1 text-sm text-gray-400">{s.label}</p>
-            </div>
+            <Card key={i} className="bg-transparent ring-0 text-center shadow-none">
+              <CardContent>
+                <p className="text-3xl font-bold md:text-4xl">{s.value}</p>
+                <p className="mt-1 text-sm text-muted-foreground">{s.label}</p>
+              </CardContent>
+            </Card>
           ))}
         </div>
       </div>

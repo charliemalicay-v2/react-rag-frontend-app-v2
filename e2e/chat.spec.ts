@@ -15,9 +15,18 @@ test("chat page shows health indicator", async ({ page }) => {
 });
 
 test("chat mode: No Stream sends query and receives response", async ({ page }) => {
+  await page.route("**/api/v1/agent", (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ query: "What are the repeatability specifications for the R-2000+C series robots?", results: { answer: "test answer", sources: ["doc1"] } }),
+    })
+  );
+
   await page.goto("/chat");
 
-  await page.selectOption("select", "nostream");
+  await page.getByRole("combobox").click();
+  await page.getByRole("option", { name: "No Stream" }).click();
 
   const input = page.getByPlaceholder("Type your message...");
   const sendButton = page.getByRole("button", { name: "Send" });
@@ -25,5 +34,5 @@ test("chat mode: No Stream sends query and receives response", async ({ page }) 
   await input.fill("What are the repeatability specifications for the R-2000+C series robots?");
   await sendButton.click();
 
-  await expect(page.getByText("Failed to get response")).toBeVisible({ timeout: 20000 });
+  await expect(page.getByText("test answer")).toBeVisible({ timeout: 20000 });
 });

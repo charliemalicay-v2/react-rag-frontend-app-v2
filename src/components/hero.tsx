@@ -1,3 +1,6 @@
+import { buttonVariants } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
+
 export function Hero() {
   return (
     <section className="from-background to-muted bg-gradient-to-b py-24 md:py-32">
@@ -12,13 +15,13 @@ export function Hero() {
         <div className="mt-10 flex items-center justify-center gap-4">
           <a
             href="/chat"
-            className="rounded-lg bg-gray-900 px-6 py-3 text-sm font-medium text-white hover:bg-gray-800"
+            className={cn(buttonVariants({ variant: "default", size: "lg" }), "px-8 py-3")}
           >
             Get Started
           </a>
           <a
             href="#"
-            className="rounded-lg border px-6 py-3 text-sm font-medium text-gray-900 hover:bg-gray-100"
+            className={cn(buttonVariants({ variant: "outline", size: "lg" }), "px-8 py-3")}
           >
             Learn More
           </a>

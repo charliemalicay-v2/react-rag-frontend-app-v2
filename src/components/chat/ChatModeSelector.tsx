@@ -1,5 +1,13 @@
 "use client";
 
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
+
 type ChatMode = "nostream" | "stream";
 
 interface ChatModeSelectorProps {
@@ -10,15 +18,16 @@ interface ChatModeSelectorProps {
 export function ChatModeSelector({ value, onChange }: ChatModeSelectorProps) {
   return (
     <div className="flex items-center gap-2">
-      <label className="text-sm font-medium text-gray-700">Mode:</label>
-      <select
-        value={value}
-        onChange={(e) => onChange(e.target.value as ChatMode)}
-        className="rounded-md border px-3 py-2 text-sm"
-      >
-        <option value="nostream">No Stream</option>
-        <option value="stream">Stream</option>
-      </select>
+      <label className="text-sm font-medium text-foreground">Mode:</label>
+      <Select value={value} onValueChange={(v) => onChange(v as ChatMode)}>
+        <SelectTrigger>
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="nostream">No Stream</SelectItem>
+          <SelectItem value="stream">Stream</SelectItem>
+        </SelectContent>
+      </Select>
     </div>
   );
 }
