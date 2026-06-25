@@ -5,6 +5,10 @@ import { useHealthCheck } from "@/hooks/useHealthCheck";
 import { useAgentQuery } from "@/hooks/useAgentQuery";
 import { useAgentStream } from "@/hooks/useAgentStream";
 import { useDocumentChat } from "@/hooks/useDocumentChat";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 function validateQuery(input: string): string | null {
   if (!input.trim()) return "Query cannot be empty.";
@@ -78,130 +82,137 @@ export function RagPanel() {
   };
 
   return (
-    <div className="mx-auto max-w-3xl space-y-8 p-4">
-      <h2 className="text-2xl font-bold">RAG Chat</h2>
+    <div className="mx-auto max-w-3xl p-4">
+      <Card>
+        <CardHeader>
+          <CardTitle>RAG Chat</CardTitle>
+        </CardHeader>
+        <ScrollArea className="max-h-[80vh]">
+          <CardContent className="space-y-8">
+            <Card>
+              <CardHeader>
+                <CardTitle>Health Check</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {healthLoading && <p className="text-muted-foreground">Checking...</p>}
+                {healthError && (
+                  <p className="text-destructive">
+                    Error: {healthErr instanceof Error ? healthErr.message : "Unknown error"}
+                  </p>
+                )}
+                {health && (
+                  <p className="text-green-600">
+                    Status: {health.status} — {health.timestamp}
+                  </p>
+                )}
+              </CardContent>
+            </Card>
 
-      <section className="rounded-lg border p-4">
-        <h3 className="mb-2 text-lg font-semibold">Health Check</h3>
-        {healthLoading && <p className="text-gray-500">Checking...</p>}
-        {healthError && (
-          <p className="text-red-500">
-            Error: {healthErr instanceof Error ? healthErr.message : "Unknown error"}
-          </p>
-        )}
-        {health && (
-          <p className="text-green-600">
-            Status: {health.status} — {health.timestamp}
-          </p>
-        )}
-      </section>
+            <Card>
+              <CardHeader>
+                <CardTitle>Query</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex gap-2">
+                  <Input
+                    type="text"
+                    value={query}
+                    onChange={(e) => {
+                      setQuery(e.target.value);
+                      if (validationError) setValidationError(null);
+                    }}
+                    placeholder="Type your query..."
+                  />
+                </div>
+                {validationError && (
+                  <p className="text-sm text-destructive">{validationError}</p>
+                )}
 
-      <section className="space-y-4 rounded-lg border p-4">
-        <h3 className="text-lg font-semibold">Query</h3>
-        <div className="flex gap-2">
-          <input
-            type="text"
-            value={query}
-            onChange={(e) => {
-              setQuery(e.target.value);
-              if (validationError) setValidationError(null);
-            }}
-            placeholder="Type your query..."
-            className="flex-1 rounded-md border px-3 py-2 text-sm"
-          />
-        </div>
-        {validationError && (
-          <p className="text-sm text-red-500">{validationError}</p>
-        )}
+                <div className="flex flex-wrap gap-2">
+                  <Button
+                    onClick={handleAgentSubmit}
+                    disabled={agentQuery.isPending}
+                  >
+                    {agentQuery.isPending ? "Sending..." : "Send Query"}
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    onClick={handleStreamStart}
+                    disabled={isStreaming}
+                  >
+                    {isStreaming ? "Streaming..." : "Stream"}
+                  </Button>
+                  {isStreaming && (
+                    <Button variant="destructive" onClick={stopStream}>
+                      Stop
+                    </Button>
+                  )}
+                  {streamError && (
+                    <Button variant="outline" onClick={retryStream}>
+                      Retry Stream
+                    </Button>
+                  )}
+                </div>
 
-        <div className="flex flex-wrap gap-2">
-          <button
-            onClick={handleAgentSubmit}
-            disabled={agentQuery.isPending}
-            className="rounded-md bg-gray-900 px-4 py-2 text-sm text-white disabled:opacity-50"
-          >
-            {agentQuery.isPending ? "Sending..." : "Send Query"}
-          </button>
-          <button
-            onClick={handleStreamStart}
-            disabled={isStreaming}
-            className="rounded-md bg-blue-700 px-4 py-2 text-sm text-white disabled:opacity-50"
-          >
-            {isStreaming ? "Streaming..." : "Stream"}
-          </button>
-          {isStreaming && (
-            <button
-              onClick={stopStream}
-              className="rounded-md bg-red-600 px-4 py-2 text-sm text-white"
-            >
-              Stop
-            </button>
-          )}
-          {streamError && (
-            <button
-              onClick={retryStream}
-              className="rounded-md bg-yellow-600 px-4 py-2 text-sm text-white"
-            >
-              Retry Stream
-            </button>
-          )}
-        </div>
+                {agentQuery.isError && (
+                  <p className="text-destructive">
+                    Query error:{" "}
+                    {agentQuery.error instanceof Error
+                      ? agentQuery.error.message
+                      : "Request failed"}
+                  </p>
+                )}
+                {agentResult && (
+                  <div className="rounded-md bg-muted p-3">
+                    <p className="text-sm">{agentResult}</p>
+                  </div>
+                )}
 
-        {agentQuery.isError && (
-          <p className="text-red-500">
-            Query error:{" "}
-            {agentQuery.error instanceof Error
-              ? agentQuery.error.message
-              : "Request failed"}
-          </p>
-        )}
-        {agentResult && (
-          <div className="rounded-md bg-gray-50 p-3">
-            <p className="text-sm">{agentResult}</p>
-          </div>
-        )}
+                {streamedData && (
+                  <div className="rounded-md bg-muted p-3">
+                    <p className="text-sm">{streamedData}</p>
+                  </div>
+                )}
 
-        {streamedData && (
-          <div className="rounded-md bg-blue-50 p-3">
-            <p className="text-sm">{streamedData}</p>
-          </div>
-        )}
+                {streamError && (
+                  <p className="text-destructive">Stream error: {streamError}</p>
+                )}
 
-        {streamError && (
-          <p className="text-red-500">Stream error: {streamError}</p>
-        )}
+                <div className="flex gap-2">
+                  <Input
+                    type="text"
+                    value={docId}
+                    onChange={(e) => setDocId(e.target.value)}
+                    placeholder="Document ID"
+                    className="w-48"
+                  />
+                  <Button
+                    variant="secondary"
+                    onClick={handleDocSubmit}
+                    disabled={docChat.isPending}
+                  >
+                    {docChat.isPending ? "Sending..." : "Chat with Document"}
+                  </Button>
+                </div>
 
-        <div className="flex gap-2">
-          <input
-            type="text"
-            value={docId}
-            onChange={(e) => setDocId(e.target.value)}
-            placeholder="Document ID"
-            className="w-48 rounded-md border px-3 py-2 text-sm"
-          />
-          <button
-            onClick={handleDocSubmit}
-            disabled={docChat.isPending}
-            className="rounded-md bg-green-700 px-4 py-2 text-sm text-white disabled:opacity-50"
-          >
-            {docChat.isPending ? "Sending..." : "Chat with Document"}
-          </button>
-        </div>
-
-        {docChat.isError && (
-          <p className="text-red-500">
-            Document chat error:{" "}
-            {docChat.error instanceof Error
-              ? docChat.error.message
-              : "Request failed"}
-          </p>
-        )}
-        {docResult && (
-          <div className="rounded-md bg-gray-50 p-3">
-            <p className="text-sm">{docResult}</p>
-          </div>
-        )}
-      </section>
+                {docChat.isError && (
+                  <p className="text-destructive">
+                    Document chat error:{" "}
+                    {docChat.error instanceof Error
+                      ? docChat.error.message
+                      : "Request failed"}
+                  </p>
+                )}
+                {docResult && (
+                  <div className="rounded-md bg-muted p-3">
+                    <p className="text-sm">{docResult}</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </CardContent>
+        </ScrollArea>
+      </Card>
     </div>
   );
 }

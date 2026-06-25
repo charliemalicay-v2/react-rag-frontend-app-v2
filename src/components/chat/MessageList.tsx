@@ -1,5 +1,7 @@
 "use client";
 
+import { Skeleton } from "@/components/ui/skeleton";
+
 export interface Message {
   id: string;
   role: "user" | "bot" | "error";
@@ -16,7 +18,7 @@ export function MessageList({ messages, isLoading, emptyMessage = "Send a messag
   if (messages.length === 0 && !isLoading) {
     return (
       <div className="flex items-center justify-center rounded-lg border border-dashed p-8">
-        <p className="text-sm text-gray-400">{emptyMessage}</p>
+        <p className="text-sm text-muted-foreground">{emptyMessage}</p>
       </div>
     );
   }
@@ -28,18 +30,19 @@ export function MessageList({ messages, isLoading, emptyMessage = "Send a messag
           key={msg.id}
           className={`rounded-lg p-4 text-sm ${
             msg.role === "user"
-              ? "ml-12 bg-gray-100"
+              ? "ml-12 bg-muted"
               : msg.role === "error"
-                ? "border border-red-200 bg-red-50 text-red-700"
-                : "mr-12 bg-blue-50"
+                ? "border border-destructive/20 bg-destructive/10 text-destructive"
+                : "mr-12 bg-muted"
           }`}
         >
           <p className="whitespace-pre-wrap">{msg.content}</p>
         </div>
       ))}
       {isLoading && (
-        <div className="mr-12 animate-pulse rounded-lg bg-blue-50 p-4">
-          <p className="text-sm text-gray-500">Thinking...</p>
+        <div className="mr-12 space-y-2">
+          <Skeleton className="h-4 w-3/4" />
+          <Skeleton className="h-4 w-1/2" />
         </div>
       )}
     </div>

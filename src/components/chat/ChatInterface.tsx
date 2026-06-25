@@ -4,6 +4,8 @@ import { useState, useCallback, useRef, useEffect } from "react";
 import { useAgentQuery } from "@/hooks/useAgentQuery";
 import { useAgentStream } from "@/hooks/useAgentStream";
 import { useTypewriter } from "@/hooks/useTypewriter";
+import { Alert, AlertTitle, AlertDescription, AlertAction } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
 import { ChatModeSelector } from "./ChatModeSelector";
 import { ChatInput } from "./ChatInput";
 import { MessageList } from "./MessageList";
@@ -101,23 +103,20 @@ export function ChatInterface() {
       <div className="space-y-2">
         <ChatInput onSend={handleSend} disabled={agentQuery.isPending || isStreaming} />
         {isStreaming && (
-          <button
-            onClick={handleStop}
-            className="rounded-md bg-red-600 px-4 py-2 text-sm text-white"
-          >
+          <Button variant="destructive" onClick={handleStop}>
             Stop Streaming
-          </button>
+          </Button>
         )}
         {streamError && (
-          <div className="flex items-center gap-2">
-            <p className="text-sm text-red-500">Stream error: {streamError}</p>
-            <button
-              onClick={handleRetry}
-              className="rounded-md bg-yellow-600 px-3 py-1 text-sm text-white"
-            >
-              Retry
-            </button>
-          </div>
+          <Alert variant="destructive">
+            <AlertTitle>Stream error</AlertTitle>
+            <AlertDescription>{streamError}</AlertDescription>
+            <AlertAction>
+              <Button variant="outline" size="sm" onClick={handleRetry}>
+                Retry
+              </Button>
+            </AlertAction>
+          </Alert>
         )}
       </div>
 

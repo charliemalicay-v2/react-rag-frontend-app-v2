@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
 
 export function Contact() {
   const [submitted, setSubmitted] = useState(false);
@@ -27,30 +29,17 @@ export function Contact() {
         <h2 className="text-center text-3xl font-bold tracking-tight sm:text-4xl">Contact Us</h2>
         <p className="text-muted-foreground mt-4 text-center">Have a question? Drop us a message.</p>
         <form onSubmit={handleSubmit} className="mt-8 space-y-4">
-          <input
-            type="text"
-            placeholder="Your name"
-            className="w-full rounded-lg border px-4 py-3 text-sm"
-            required
-          />
-          <input
-            type="email"
-            placeholder="Your email"
-            className="w-full rounded-lg border px-4 py-3 text-sm"
-            required
-          />
+          <Input type="text" placeholder="Your name" required />
+          <Input type="email" placeholder="Your email" required />
           <textarea
             placeholder="Your message"
             rows={4}
             className="w-full rounded-lg border px-4 py-3 text-sm"
             required
           />
-          <button
-            type="submit"
-            className="w-full rounded-lg bg-gray-900 px-6 py-3 text-sm font-medium text-white hover:bg-gray-800"
-          >
+          <Button type="submit" className="w-full">
             Send Message
-          </button>
+          </Button>
         </form>
       </div>
     </section>
